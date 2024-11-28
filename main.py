@@ -1,5 +1,32 @@
+def write_read_file(tasks: list = None, choices: str = "w") -> None:
+    task = TaskManager()
+
+    with open("tasks.csv", choices, encoding="utf-8") as file:
+        if choices == "w":
+            for task in tasks:
+                file.write(
+                    f"{task.id},{task.name},{task.description},"
+                    f"{task.category},{task.period_execution}"
+                    f"{task.priority},{task.status}\n"
+                )
+        else:
+            try:
+                for line in file:
+                    (
+                        id,
+                        name,
+                        description,
+                        category,
+                        period_execution,
+                        priority,
+                        status,
+                    ) = line.strip().split(",")
+            except ValueError:
+                print("Нет данных")
+
+
 class Task:
-    count_id = 0
+    count_id = 1
 
     def __init__(
         self,
@@ -39,6 +66,21 @@ class TaskManager:
         description: str,
         category: str,
         period_execution: int,
+        priority: str,
     ):
-        task = Task(name, description, category, period_execution)
+        task = Task(name, description, category, period_execution, priority)
         self.list_tasks.append(task)
+        write_read_file(self.list_tasks, choices="w")
+
+    def display_output(self) -> None:
+        """
+        Перебирает все задачи, и выводит информацию
+        о каждой задаче. Если список пуст, выводится сообщение о том, что задачи отсутствуют.
+        """
+        if not self.tasks:
+            print("Нет задач")
+            return
+        print("Список задач:")
+        print("***")
+        for task in self.tasks:
+            print(task)
