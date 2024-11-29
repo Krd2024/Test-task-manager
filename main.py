@@ -38,7 +38,7 @@ class Task:
             f"Описание: {self.description}\n"
             f"Срок выполнения: {self.period_execution}\n"
             f"Приоритет: {self.priority}\n"
-            f"Статус: {self.status}\n"
+            f"Статус: {self.status}\n\n"
         )
 
 
@@ -114,3 +114,19 @@ class TaskManager:
             return
         print(f"\nСПИСОК ВСЕХ ЗАДАЧ В КАТЕГОРИИ - {category.upper()}:\n")
         print(*tasks, sep="\n")
+
+    def search_tasks(self, keywords: list = None, status: str = None):
+        print(status, "<<<<<<<<<< - 1")
+        if status is not None:
+            tasks = [task for task in self.list_tasks if task.status == status]
+            if len(tasks) > 0:
+                print(*tasks, "\n")
+            else:
+                f"\nЗадачи со статусом {status} не найдены\n"
+
+        #     results = (
+        #         (*tasks, "\n")
+        #         if len(tasks) > 0
+        #         else f"\nЗадачи со статусом {status} не найдены"
+        #     )
+        # print(results)
