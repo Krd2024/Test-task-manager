@@ -1,47 +1,4 @@
-def write_read_file(tasks: list = None, choices: str = "w") -> None:
-    """
-    Функция для записи или чтения данных о книгах в/из файла "tasks.csv".
-
-    Аргументы:
-        tasks (list, optional): Список задач.
-        choices (str, optional): Режим работы с файлом.
-
-    - Если 'choices' равно "w", функция записывает
-        информацию о задачах  в файл "tasks.csv"
-        (id, name, description, category, period_execution,priority,status).
-
-    - Если 'choices' отличается от "w", функция читает строки из файла,
-        обрабатывает их и добавляет задачи в объект.
-
-    Исключения:
-        - При чтении файла: если строка в файле не соответствует
-          ожидаемому формату, выводится сообщение "Нет записи".
-
-    """
-    task = TaskManager()
-
-    with open("tasks.csv", choices, encoding="utf-8") as file:
-        if choices == "w":
-            for task in tasks:
-                file.write(
-                    f"{task.id},{task.name},{task.description},"
-                    f"{task.category},{task.period_execution},"
-                    f"{task.priority},{task.status}\n"
-                )
-        else:
-            try:
-                for line in file:
-                    (
-                        id,
-                        name,
-                        description,
-                        category,
-                        period_execution,
-                        priority,
-                        status,
-                    ) = line.strip().split(",")
-            except ValueError:
-                print("Нет данных")
+from write_read import write_read_file
 
 
 class Task:
@@ -59,7 +16,7 @@ class Task:
         name: str,
         description: str,
         category: str,
-        period_execution: int,
+        period_execution: str,
         priority: str,
         status: str = "Не выполнена",
     ) -> None:
@@ -95,6 +52,7 @@ class TaskManager:
         category: str,
         period_execution: int,
         priority: str,
+        status: str = "Не выполнена",
     ):
         """
         Создаёт новую задачу и добавляет её в список.
@@ -103,11 +61,24 @@ class TaskManager:
         """
         # Создаёт оъект задачи
         task = Task(name, description, category, period_execution, priority)
+        # write_read_file_2(task, choices="a")
+        print(task, "<<<<<<<<<<<< ")
+
         # Заносит объек задачи в список задач
         self.list_tasks.append(task)
+
         # Вызывает функцию записи в файл
-        # Передаёт список задач и флаг для "w" для записи
-        write_read_file(self.list_tasks, choices="w")
+        # Передаёт список задач и флаг "w" для записи
+        write_read_file(self.list_tasks, task_manager_class=TaskManager)
+
+    def delete_task(self, task_id):
+        for task in self.list_tasks:
+            if task.id == task_id:
+                self.list_tasks.remove(task)
+                print(f"\nЗадача '{task.name}' удалена\n")
+                write_read_file(self.list_tasks, task_manager_class=TaskManager)
+                return
+        print(f"ОШИБКА! Задача с ID: {task_id} не найдена.\n")
 
     def display_all_task(self) -> None:
         """
@@ -115,7 +86,7 @@ class TaskManager:
         о каждой задаче. Если список пуст, выводится сообщение о том, что задачи отсутствуют.
         """
         if not self.list_tasks:
-            print("Нет задач")
+            print("\nНЕТ ЗАДАЧ\n")
             return
 
         print("\n СПИСОК ВСЕХ ЗАДАЧ:")
