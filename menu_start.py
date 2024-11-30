@@ -1,11 +1,15 @@
 from check import is_digit
-from dict_for_search import (
+from dict_for_compare import (
     checking_month,
     get_category,
     get_priority,
-    get_status,
 )
-from main import TaskManager  # , write_read_file
+from menu_handler import (
+    display_all_hendler,
+    display_categories_hendler,
+    search_hendler,
+)
+from task_manager import TaskManager  # , write_read_file
 from write_read import write_read_file
 
 
@@ -34,7 +38,7 @@ def main() -> None:
     write_read_file(task_manager_class=TaskManager, choices="r")
 
     while True:
-        print("Меню упрвления задачами:\n")
+        print("МЕНЮ УПРАВЛЕНИЯ ЗАДАЧАМИ:\n")
         print("1. Добавить ")
         print("2. Удалить ")
         print("3. Найти задачи")
@@ -51,18 +55,15 @@ def main() -> None:
             # Заголов для задачи
             while True:
                 name = input("Введите название: ")
-
                 # Проверить поле на наличие символов
                 if len(name.replace(" ", "")) == 0:
                     print(
                         f"{'-' * 40}\nОШИБКА! Поле 'name' не может быть пустым\n{'-' * 40}"
                     )
-
                     continue
                 break
             while True:
                 description = input("Введите описание: ")
-
                 # Проверить поле описание на наличие символов
                 if len(description.replace(" ", "")) == 0:
                     print(
@@ -83,7 +84,7 @@ def main() -> None:
             # Ключ-это номер категории, значение-название категории
             category = get_category(category)
 
-            print("Срок выполнения")
+            print("\nСрок выполнения задачи\n")
             while True:
                 year = input("Введите год: ")
                 is_digit(year)
@@ -162,61 +163,67 @@ def main() -> None:
                 print("ОШИБКА! Только числа ")
 
         elif choice == "3":
-            print(
-                "ВЫБЕРИТЕ ПАРАМЕТРЫ ПОИСКА:\n1 - По ключевым словам\n2 - По статусу выполнения"
-            )
-            choice_search = input("\nВыбор: ")
+            search_hendler()
+            # print(
+            #     "ВЫБЕРИТЕ ПАРАМЕТРЫ ПОИСКА:\n1 - По ключевым словам\n2 - По статусу выполнения"
+            # )
+            # choice_search = input("\nВыбор: ")
 
-            if choice_search not in ("1", "2"):
-                print(f"{'-' * 40}\nОШИБКА! параметры поиска не определены\n{'-' * 40}")
-                continue
+            # if choice_search not in ("1", "2"):
+            #     print(f"{'-' * 40}\nОШИБКА! параметры поиска не определены\n{'-' * 40}")
+            #     continue
 
-            if choice_search == "1":
-                keywords = input("Введите слова через пробел: ").split()
-                task_manager.search(keywords=keywords)
+            # if choice_search == "1":
+            #     keywords = input("Введите слова через пробел: ").split()
 
-            elif choice_search == "2":
-                print("Выберите статус для поиска:\n1 - Выполнена\n2 - Не выполнена")
-                status = input("\nВыбор: ")
-                if status not in ("1", "2"):
-                    print(f"{'-' * 40}\nОШИБКА! Категория не определена\n{'-' * 40}")
-                    continue
+            #     if len(max(keywords)) <= 2:
+            #         print(
+            #             f"{'-' * 40}\nС такими словами, рузультат поиска может отличаться от ожидаемого"
+            #         )
 
-                # Получает название статуса по ключу
-                # Ключ-это номер статуса, значение-статус
-                status = get_status(status)
+            #     task_manager.search(keywords=keywords)
 
-                # Вызывает метод поиска передаёт название статуса
-                task_manager.search(status=status)
+            # elif choice_search == "2":
+            #     print("Выберите статус для поиска:\n1 - Выполнена\n2 - Не выполнена")
+            #     status = input("\nВыбор: ")
+            #     if status not in ("1", "2"):
+            #         print(f"{'-' * 40}\nОШИБКА! Категория не определена\n{'-' * 40}")
+            #         continue
+
+            #     # Получает название статуса по ключу
+            #     # Ключ-это номер статуса, значение-статус
+            #     status = get_status(status)
+
+            #     # Вызывает метод поиска передаёт название статуса
+            #     task_manager.search(status=status)
 
         # Показать все задачи
         elif choice == "4":
-            task_manager.display_all_task()
+            display_all_hendler()
 
         # Показать задачи в выбранной категории
         elif choice == "5":
+            display_categories_hendler()
 
-            # получить символический номер категории
-            print("Выберите категорию:\n1 - Работа\n2 - Личное\n3 - Обучение ")
-            num_category = input("\nВыбор: ")
+            # # получить символический номер категории
+            # print("Выберите категорию:\n1 - Работа\n2 - Личное\n3 - Обучение ")
+            # num_category = input("\nВыбор: ")
 
-            # Если категория не в рамках предложенного, вывести ошибку.
-            # Если категория в рамках предложенного,вызвать метод вывода
-            # задач выбранной категории
-            if num_category not in ("1", "2", "3"):
-                # print("-" * 40)
-                print(f"{'-' * 40}\nОШИБКА! Категория не определена\n{'-' * 40}")
+            # # Если категория не в рамках предложенного, вывести ошибку.
+            # # Если категория в рамках предложенного,вызвать метод вывода
+            # # задач выбранной категории
+            # if num_category not in ("1", "2", "3"):
+            #     # print("-" * 40)
+            #     print(f"{'-' * 40}\nОШИБКА! Категория не определена\n{'-' * 40}")
 
-                continue
+            #     continue
 
-            # Получает название категории по ключу
-            # Ключ-это номер категории, значение-название категории
-            category = get_category(num_category)
+            # # Получает название категории по ключу
+            # # Ключ-это номер категории, значение-название категории
+            # category = get_category(num_category)
 
-            # Вызывает метод показа задач в выбранной категории
-            # Передаёт название категории
-            # task_manager.display_tasks_in_category(category)
-            task_manager.search(category=category)
+            # # Вызывает метод показа задач в выбранной категории
+            # task_manager.search(category=category)
 
         elif choice == "6":
             pass

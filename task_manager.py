@@ -1,46 +1,5 @@
+from task import Task
 from write_read import write_read_file
-
-
-class Task:
-    """
-    Класс для представления задачи.
-
-    Счетчик уникальных идентификаторов (count_id)
-    увеличивается автоматически при создании каждой новой задачи.
-    """
-
-    count_id = 1
-
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        category: str,
-        period_execution: str,
-        priority: str,
-        status: str = "Не выполнена",
-    ) -> None:
-        self.id = Task.count_id
-        self.name = name
-        self.category = category
-        self.description = description
-        self.period_execution = period_execution
-        self.status = status
-        self.priority = priority
-        Task.count_id += 1
-
-    def __str__(self):
-        """Строковое представление задачи"""
-
-        return (
-            f"----- {self.name.upper()}({self.id}) -----\n"
-            f"- ID:{self.id} -\n"
-            f"Категория: {self.category}\n"
-            f"Описание: {self.description}\n"
-            f"Срок выполнения: {self.period_execution}\n"
-            f"Приоритет: {self.priority}\n"
-            f"Статус: {self.status}\n\n"
-        )
 
 
 class TaskManager:
@@ -62,8 +21,6 @@ class TaskManager:
         """
         # Создаёт оъект задачи
         task = Task(name, description, category, period_execution, priority)
-        # write_read_file_2(task, choices="a")
-        print(task, "<<<<<<<<<<<< ")
 
         # Заносит объек задачи в список задач
         self.list_tasks.append(task)
@@ -76,11 +33,11 @@ class TaskManager:
         for task in self.list_tasks:
             if task.id == task_id:
                 self.list_tasks.remove(task)
-                print(f"\nЗадача '{task.name}' удалена\n")
+                print(f"\nЗАДАЧА '{task.name}' УДАЛЕНА\n{'-'*40}")
 
                 write_read_file(self.list_tasks, task_manager_class=TaskManager)
                 return
-        print(f"ОШИБКА! Задача с ID: {task_id} не найдена.\n")
+        print(f"ОШИБКА! ЗАДАЧА С ID: {task_id} НЕ НАЙДЕНА.\n{'-'*40}")
 
     def display_all_task(self) -> None:
         """
@@ -91,7 +48,7 @@ class TaskManager:
             print("\nНЕТ ЗАДАЧ\n")
             return
 
-        print("\n СПИСОК ВСЕХ ЗАДАЧ:")
+        print(f"\nСПИСОК ВСЕХ ЗАДАЧ:\n{'='*40}")
         tasks = [task for task in self.list_tasks]
         print(*tasks, sep="\n")
 
@@ -114,7 +71,7 @@ class TaskManager:
         выводится сообщение о том, что задачи в категории отсутствуют.
         """
         if not self.list_tasks:
-            print("\nСПИСОК ЗАДАЧ ПУСТ.\n")
+            print(f"\nСПИСОК ЗАДАЧ ПУСТ.\n{'='*40}")
             return
 
         tasks = [
@@ -124,10 +81,10 @@ class TaskManager:
         ]
 
         if len(tasks) == 0:
-            print(f"\nВ КАТЕГОРИИ {category.upper()} НЕТ ЗАДАЧ.\n")
+            print(f"\nВ КАТЕГОРИИ {category.upper()} НЕТ ЗАДАЧ.\n{'-'*40}")
             return
 
-        print(f"\nСПИСОК ВСЕХ ЗАДАЧ В КАТЕГОРИИ - {category.upper()}:\n")
+        print(f"\nСПИСОК ВСЕХ ЗАДАЧ В КАТЕГОРИИ - {category.upper()}:\n{'-'*40}")
         print(*tasks, sep="\n")
 
     def search_by_status(self, status: str = None):
@@ -136,19 +93,27 @@ class TaskManager:
             tasks = [task for task in self.list_tasks if task.status == status]
             if len(tasks) > 0:
 
-                print(f"\nЗадачи со статусом '{status}':\n")
+                print(f"\nЗАДАЧИ СО СТАТУСОМ '{status}':\n{'-' * 40}")
                 print(*tasks, "\n")
 
             else:
-                print(f"\nЗадачи со статусом '{status}' не найдены\n")
+                print(f"\nЗАДАЧИ СО СТАТУСОМ '{status}' НЕ НАЙДЕНЫ\n{'-' * 40}")
 
     def search_by_keywords(self, keywords: list) -> None:
 
+        # print("==================")
         print()
+        tasks = []
         for task in self.list_tasks:
             for key in keywords:
                 if (
                     key.lower() in task.name.lower()
                     or key.lower() in task.description.lower()
                 ):
-                    print(task)
+                    # print(task)
+                    tasks.append(task)
+        if len(tasks) > 0:
+            print(f"РЕЗУЛЬТАТЫ ПОИСКА:\n{'-' * 40}")
+            print(*tasks, sep="\n")
+        else:
+            print(f"{'-' * 40}\nПОИСК НЕ ДАЛ РЕЗУЛЬТАТА")
