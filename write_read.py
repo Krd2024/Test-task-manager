@@ -45,15 +45,15 @@ def write_read_file(
                         priority,
                         status,
                     ) = line.strip().split(",")
-                    print(
-                        id,
-                        name,
-                        description,
-                        category,
-                        period_execution,
-                        priority,
-                        status,
-                    )
+                    # print(
+                    #     id,
+                    #     name,
+                    #     description,
+                    #     category,
+                    #     period_execution,
+                    #     priority,
+                    #     status,
+                    # )
                     task_manager.add_task(
                         name, description, category, period_execution, priority, status
                     )

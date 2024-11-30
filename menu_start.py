@@ -1,5 +1,10 @@
 from check import is_digit
-from dict_for_search import get_category_for_menu, get_status_for_search
+from dict_for_search import (
+    checking_month,
+    get_category,
+    get_priority,
+    get_status,
+)
 from main import TaskManager  # , write_read_file
 from write_read import write_read_file
 
@@ -32,9 +37,9 @@ def main() -> None:
         print("Меню упрвления задачами:\n")
         print("1. Добавить ")
         print("2. Удалить ")
-        print("3. Найти ")
+        print("3. Найти задачи")
         print("4. Показать все ")
-        print("5. Выбор категории ")
+        print("5. Показать задачи по категориям ")
         print("6. Редактировать ")
         print("0. Выход")
         print("-" * 40)
@@ -44,54 +49,94 @@ def main() -> None:
         # Ввести данные для новой задачи
         if choice == "1":
             # Заголов для задачи
-            name = input("Введите название: ")
+            while True:
+                name = input("Введите название: ")
 
-            # Проверить поле на наличие символов
-            if len(name.replace(" ", "")) == 0:
+                # Проверить поле на наличие символов
+                if len(name.replace(" ", "")) == 0:
+                    print(
+                        f"{'-' * 40}\nОШИБКА! Поле 'name' не может быть пустым\n{'-' * 40}"
+                    )
+
+                    continue
+                break
+            while True:
+                description = input("Введите описание: ")
+
+                # Проверить поле описание на наличие символов
+                if len(description.replace(" ", "")) == 0:
+                    print(
+                        f"{'-' * 40}\nПоле 'description' не может быть пустым\n{'-' * 40}"
+                    )
+                    continue
+                break
+            while True:
+                # Выбирать категорию для задачи
+                print("Выберите категорию:\n1 - Работа\n2 - Личное\n3 - Обучение ")
+                category = input("\nВыбор: ")
+                if category not in ("1", "2", "3"):
+                    print(f"{'-' * 40}\nОШИБКА! Категория не определена\n{'-' * 40}")
+                    continue
+                break
+
+            # Получает название категории по ключу
+            # Ключ-это номер категории, значение-название категории
+            category = get_category(category)
+
+            print("Срок выполнения")
+            while True:
+                year = input("Введите год: ")
+                is_digit(year)
+
+                #
+                if year:
+                    if int(year) < 2024:
+                        print("Ушли те времена")
+                        continue
+                else:
+                    print("Нужно вводить цифры.Попробуйте ещё раз")
+                    continue
+                break
+            while True:
+                #
+                month = input("Введите месяц: ")
+                if is_digit(month):
+                    if int(month) < 1 or int(month) > 12:
+                        print("Этот месяц не отсюда. Попробуйте ещё раз.")
+                        continue
+                else:
+                    print("Так не пойдёт, нужны цифры")
+                    continue
+                break
+            while True:
+                #
+                day = input("Введите день: ")
+                if is_digit(day):
+
+                    # Вызывает функцию "checking_month" проверки соответствия кол-ва дней в месяце
+                    # В функции предусмотрина проверка на високостность
+                    # Получат True или False
+                    if not checking_month(month, int(day), int(year)):
+                        print("Эти дни нам не знакомы.Попробуйте ещё раз")
+                        continue
+                else:
+                    print("Непонятно, что за день ")
+                    continue
+                break
+
+            period_execution = f"{year}-{month}-{day}"
+
+            while True:
+                # Выбрать приоритет для задачи
                 print(
-                    f"{'-' * 40}\nОШИБКА! Поле 'name' не может быть пустым\n{'-' * 40}"
+                    "Выберите приоритет задачи:\n1 - Низкий\n2 - Средний\n3 - Высокий "
                 )
-
-                continue
-
-            description = input("Введите описание:")
-
-            # Проверить поле описание на наличие символов
-            if len(description.replace(" ", "")) == 0:
-                print(
-                    f"{'-' * 40}\nПоле 'description' не может быть пустым\n{'-' * 40}"
-                )
-
-                continue
-
-            category = input("Введите категорию: ")
-
-            if len(category.replace(" ", "")) == 0:
-                print(
-                    f"{'-' * 40}\nОШИБКА! Поле 'category' не может быть пустым\n{'-' * 40}"
-                )
-
-                continue
-
-            period_execution = input("Время на завершение задачи: ")
-
-            if (
-                len(period_execution.replace(" ", "")) == 0
-                or 0
-                and not is_digit(period_execution)
-            ):
-                print(f"{'-' * 40}\nОШИБКА! Не корректные данные\n{'-' * 40}")
-
-                continue
-
-            priority = input("Введите приоритет: ")
-
-            if len(category.replace(" ", "")) == 0:
-                print(
-                    f"{'-' * 40}\nОШИБКА! Поле 'priority' не может быть пустым\n{'-' * 40}"
-                )
-
-                continue
+                priority = input("\nВыбор: ")
+                if priority not in ("1", "2", "3"):
+                    print(f"{'-' * 40}\nОШИБКА! Приоритет не определён\n{'-' * 40}")
+                    continue
+                break
+            priority = get_priority(priority)
 
             task_manager.add_task(
                 name,
@@ -118,32 +163,31 @@ def main() -> None:
 
         elif choice == "3":
             print(
-                "Выберите параметры поиска:\n1 - По ключевым словам\n2 - По статусу выполнения"
+                "ВЫБЕРИТЕ ПАРАМЕТРЫ ПОИСКА:\n1 - По ключевым словам\n2 - По статусу выполнения"
             )
-            choice_search = input("Выбор: ")
+            choice_search = input("\nВыбор: ")
 
             if choice_search not in ("1", "2"):
-                print(f"{'-' * 40}\nОШИБКА! Категория не определена\n{'-' * 40}")
+                print(f"{'-' * 40}\nОШИБКА! параметры поиска не определены\n{'-' * 40}")
                 continue
 
             if choice_search == "1":
                 keywords = input("Введите слова через пробел: ").split()
-                task_manager.search_tasks(keywords)
+                task_manager.search(keywords=keywords)
 
             elif choice_search == "2":
                 print("Выберите статус для поиска:\n1 - Выполнена\n2 - Не выполнена")
-                status = input("Выбор: ")
+                status = input("\nВыбор: ")
                 if status not in ("1", "2"):
                     print(f"{'-' * 40}\nОШИБКА! Категория не определена\n{'-' * 40}")
                     continue
 
                 # Получает название статуса по ключу
                 # Ключ-это номер статуса, значение-статус
-                status = get_status_for_search(status)
-                print(status, "<<<<<<<<<< - 2")
+                status = get_status(status)
 
                 # Вызывает метод поиска передаёт название статуса
-                task_manager.search_tasks(status=status)
+                task_manager.search(status=status)
 
         # Показать все задачи
         elif choice == "4":
@@ -153,9 +197,8 @@ def main() -> None:
         elif choice == "5":
 
             # получить символический номер категории
-            num_category = input(
-                "Выберите категорию:\n1 - Работа\n2 - Личное\n3 - Обучение "
-            )
+            print("Выберите категорию:\n1 - Работа\n2 - Личное\n3 - Обучение ")
+            num_category = input("\nВыбор: ")
 
             # Если категория не в рамках предложенного, вывести ошибку.
             # Если категория в рамках предложенного,вызвать метод вывода
@@ -164,17 +207,16 @@ def main() -> None:
                 # print("-" * 40)
                 print(f"{'-' * 40}\nОШИБКА! Категория не определена\n{'-' * 40}")
 
-                # print("-" * 40)
                 continue
-            # else:
 
             # Получает название категории по ключу
             # Ключ-это номер категории, значение-название категории
-            category = get_category_for_menu(num_category)
+            category = get_category(num_category)
 
             # Вызывает метод показа задач в выбранной категории
             # Передаёт название категории
-            task_manager.display_tasks_in_category(category)
+            # task_manager.display_tasks_in_category(category)
+            task_manager.search(category=category)
 
         elif choice == "6":
             pass

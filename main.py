@@ -33,7 +33,8 @@ class Task:
         """Строковое представление задачи"""
 
         return (
-            f"----- {self.name.upper()} -----\n"
+            f"----- {self.name.upper()}({self.id}) -----\n"
+            f"- ID:{self.id} -\n"
             f"Категория: {self.category}\n"
             f"Описание: {self.description}\n"
             f"Срок выполнения: {self.period_execution}\n"
@@ -76,6 +77,7 @@ class TaskManager:
             if task.id == task_id:
                 self.list_tasks.remove(task)
                 print(f"\nЗадача '{task.name}' удалена\n")
+
                 write_read_file(self.list_tasks, task_manager_class=TaskManager)
                 return
         print(f"ОШИБКА! Задача с ID: {task_id} не найдена.\n")
@@ -90,11 +92,22 @@ class TaskManager:
             return
 
         print("\n СПИСОК ВСЕХ ЗАДАЧ:")
-        print(" " * 6)
-        for task in self.list_tasks:
-            print(task)
+        tasks = [task for task in self.list_tasks]
+        print(*tasks, sep="\n")
 
-    def display_tasks_in_category(self, category):
+    def search(self, category: str = None, status: str = None, keywords: str = None):
+
+        if category is not None:
+            self.search_by_category(category)
+
+        elif status is not None:
+            print(status)
+            self.search_by_status(status)
+
+        elif keywords is not None:
+            self.search_by_keywords(keywords)
+
+    def search_by_category(self, category) -> None:
         """
         Перебирает все задачи, и выводит информацию
         о каждой задаче определенной категории. Если в данной категории нет задач,
@@ -107,26 +120,35 @@ class TaskManager:
         tasks = [
             task
             for task in self.list_tasks
-            if task.category.lower() == category.lower()
+            if task.category.lower().replace(" ", "") == category.lower()
         ]
+
         if len(tasks) == 0:
             print(f"\nВ КАТЕГОРИИ {category.upper()} НЕТ ЗАДАЧ.\n")
             return
+
         print(f"\nСПИСОК ВСЕХ ЗАДАЧ В КАТЕГОРИИ - {category.upper()}:\n")
         print(*tasks, sep="\n")
 
-    def search_tasks(self, keywords: list = None, status: str = None):
-        print(status, "<<<<<<<<<< - 1")
+    def search_by_status(self, status: str = None):
+
         if status is not None:
             tasks = [task for task in self.list_tasks if task.status == status]
             if len(tasks) > 0:
-                print(*tasks, "\n")
-            else:
-                f"\nЗадачи со статусом {status} не найдены\n"
 
-        #     results = (
-        #         (*tasks, "\n")
-        #         if len(tasks) > 0
-        #         else f"\nЗадачи со статусом {status} не найдены"
-        #     )
-        # print(results)
+                print(f"\nЗадачи со статусом '{status}':\n")
+                print(*tasks, "\n")
+
+            else:
+                print(f"\nЗадачи со статусом '{status}' не найдены\n")
+
+    def search_by_keywords(self, keywords: list) -> None:
+
+        print()
+        for task in self.list_tasks:
+            for key in keywords:
+                if (
+                    key.lower() in task.name.lower()
+                    or key.lower() in task.description.lower()
+                ):
+                    print(task)
