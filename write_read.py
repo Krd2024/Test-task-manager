@@ -25,7 +25,6 @@ def write_read_file(
         task_manager = task_manager_class()
 
     with open("tasks.csv", choices, encoding="utf-8") as file:
-        print(choices)
         if choices == "w":
             for task in list_tasks:
                 file.write(

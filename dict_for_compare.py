@@ -17,7 +17,7 @@ def checking_month(month, day, year):
 
     dict_days_in_month = {
         "1": 31,
-        "2": 29,
+        "2": 28,
         "3": 31,
         "4": 30,
         "5": 31,
@@ -30,7 +30,7 @@ def checking_month(month, day, year):
         "12": 31,
     }
     if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0):
-        dict_days_in_month["2"] = 28
+        dict_days_in_month["2"] = 29
 
     # print(list(range(1, dict_days_in_month[month] + 1)))
     return day in list(range(1, dict_days_in_month[month] + 1))
