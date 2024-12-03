@@ -1,19 +1,55 @@
-def get_category(num: str) -> str:
+def get_category(num: str = None) -> str:
+    """
+    Возвращает категорию в зависимости от переданного номера или весь словарь категорий.
+
+    Если передан параметр 'num', функция вернет категорию, соответствующую этому номеру.
+    Если параметр 'num' не передан (равен None), функция вернет весь словарь категорий.
+
+    """
     dict_category = {"1": "Работа", "2": "Личное", "3": "Обучение"}
+    if num is None:
+        return dict_category
     return dict_category[num]
 
 
-def get_status(num: str) -> str:
+def get_status(num: str = None) -> str:
+    """
+    Возвращает статус в зависимости от переданного номера или весь словарь статусов.
+
+    Если передан параметр 'num', функция вернет статус, соответствующую этому номеру.
+    Если параметр 'num' не передан (равен None), функция вернет весь словарь статусов.
+
+    """
     dict_status = {"1": "Выполнена", "2": "Не выполнена"}
+    if num is None:
+        return dict_status
     return dict_status[num]
 
 
-def get_priority(num: str) -> str:
+def get_priority(num: str = None) -> str:
+    """
+    Возвращает приоритет в зависимости от переданного номера или весь словарь приоритетов.
+
+    Если передан параметр 'num', функция вернет приоритет, соответствующую этому номеру.
+    Если параметр 'num' не передан (равен None), функция вернет весь словарь приоритетов.
+
+    """
     dict_priority = {"1": "Низкий", "2": "Средний", "3": "Высокий"}
+    if num is None:
+        return dict_priority
     return dict_priority[num]
 
 
 def checking_month(month, day, year):
+    """
+    Проверяет, является ли введённая комбинация месяца, дня и года корректной.
+
+    - Определяет количество дней в каждом месяце с учётом високосного года.
+    - Для февраля (месяц 2) устанавливает 29 дней, если год високосный.
+    - Проверяет, входит ли значение дня в допустимый диапазон для указанного месяца.
+
+    Возвращает True, если комбинация валидна, иначе False
+    """
 
     dict_days_in_month = {
         "1": 31,
@@ -32,11 +68,82 @@ def checking_month(month, day, year):
     if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0):
         dict_days_in_month["2"] = 29
 
-    # print(list(range(1, dict_days_in_month[month] + 1)))
     return day in list(range(1, dict_days_in_month[month] + 1))
 
 
-# print(checking_month("1", 40))
-# year = 2024
-# print(year % 4 == 0 and (year % 100 != 0 or year % 400 == 0))
-# print(checking_month("2", 29, 2023))
+def get_search_and_count_methods():
+    """
+    Возвращает словарь с доступными методами поиска и их описаниями.
+
+    Каждый метод поиска включает:
+    - Метку ('label') для отображения в меню.
+    - Действие ('action'), которое выполняется при выборе метода.
+
+    Вложенные функции:
+    - 'search_keywords': Выполняет поиск задач по ключевым словам.
+      - Запрашивает у пользователя список слов.
+      - Игнорирует слова короче 4 символов.
+      - Передаёт отфильтрованные слова в метод поиска 'search_by_keywords'.
+
+    - 'search_status': Выполняет поиск задач по статусу.
+      - Отображает список доступных статусов.
+      - Запрашивает у пользователя выбор.
+      - Передаёт выбранный статус в метод поиска 'search'.
+
+    Возвращает:
+    dict: Словарь с ключами методов поиска и их описаниями:
+    - "1": {"label": "По ключевым словам", "action": search_keywords}
+    - "2": {"label": "По статусу выполнения", "action": search_status}
+
+    """
+
+    def search_keywords():
+        from task_manager import TaskManager
+
+        task_manager = TaskManager()
+        # Получение ключевых слов
+        keywords = input("Введите слова через пробел: ").split()
+
+        # Проверка на минимальную длину слов
+        if len(max(keywords)) <= 3:
+            print(f"{'-' * 40}\nСлова коротче 4 символов не принимаются\n{'-' * 40}")
+
+        # Отфильтровать слова длиной менее 4 символов
+        keywords_sort = list(filter(lambda x: len(x) >= 4, keywords))
+
+        # Вызывает метод поиска
+        task_manager.search_by_keywords(keywords_sort)
+
+    def search_status():
+        from task_manager import TaskManager
+
+        task_manager = TaskManager()
+
+        while True:
+            print("Выберите статус для поиска:")
+
+            # Отображает список статусов
+            for key, val in get_status().items():
+                print(f"{key}. {val}")
+            # Выбор статуса
+            status = input("\nВыбор: ").replace(" ", "")
+
+            # Проверка выбора по словарю
+            if status not in get_status():
+                print(f"{'-' * 40}\nОШИБКА! Статус не определён\n{'-' * 40}")
+                continue
+            break
+        # Получает название статуса по ключу
+        # Ключ-это номер статуса, значение-статус
+        status = get_status(status)
+
+        # Вызывает метод поиска передаёт название статуса
+        task_manager.search(status=status)
+
+    # Варианты поиска с методами действия
+    dict_search_methods = {
+        "1": {"label": "По ключевым словам", "action": search_keywords},
+        "2": {"label": "По статусу выполнения", "action": search_status},
+    }
+
+    return dict_search_methods

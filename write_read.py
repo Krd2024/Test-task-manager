@@ -22,19 +22,24 @@ def write_read_file(
     """
 
     if task_manager_class is not None:
+        # Инициализация объекта менеджера задач, если передан класс
         task_manager = task_manager_class()
 
+    # Открывает файл "tasks.csv" с указанным режимом (чтение или запись)
     with open("tasks.csv", choices, encoding="utf-8") as file:
         if choices == "w":
             for task in list_tasks:
+                # Форматирует данные задачи в строку CSV и записываем в файл
                 file.write(
                     f"{task.id},{task.name},{task.description},"
                     f"{task.category},{task.period_execution},"
                     f"{task.priority},{task.status}\n"
                 )
         else:
+            # Если режим чтения ("r"), пытается прочитать задачи из файла
             try:
                 for line in file:
+                    # Разделят строку файла на атрибуты задачи по разделителю ","
                     (
                         id,
                         name,
@@ -44,9 +49,10 @@ def write_read_file(
                         priority,
                         status,
                     ) = line.strip().split(",")
-
+                    # Добавляем задачу в менеджер задач
                     task_manager.add_task(
                         name, description, category, period_execution, priority, status
                     )
             except ValueError:
-                print("Нет данных")
+                # Если файл пуст или данные некорректны, выводит сообщение
+                print("Пустой файл")
