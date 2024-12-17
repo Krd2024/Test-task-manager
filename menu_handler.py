@@ -34,7 +34,7 @@ def create_task_handler(update: bool = False):
         # Функция get_valid_input проверяет, что введенное значение не является пустым.
         # Если введена пустая строка (с учётом пробелов), то выводится сообщение об ошибке.
         name = get_valid_input(
-            "Введите название книги: ",
+            "Введите название задачи: ",
             lambda x: len(x.strip()) > 0,
             f"{'-' * 40}\nОШИБКА! Поле 'name' не может быть пустым\n{'-' * 40}",
         )
@@ -45,7 +45,7 @@ def create_task_handler(update: bool = False):
         # Функция get_valid_input проверяет, что введенное значение не является пустым.
         # Если введена пустая строка (с учётом пробелов), то выводится сообщение об ошибке.
         description = get_valid_input(
-            "Введите название книги: ",
+            "Введите описание задачи: ",
             lambda x: len(x.strip()) > 0,
             f"{'-' * 40}\nОШИБКА! Поле 'name' не может быть пустым\n{'-' * 40}",
         )
@@ -229,6 +229,7 @@ def display_all_task_hendler():
 
 def display_categories_hendler():
     while True:
+
         # получить символический номер категории
         print("Выберите категорию:\n1 - Работа\n2 - Личное\n3 - Обучение ")
         num_category = input("\nВыбор: ").replace(" ", "")
@@ -266,14 +267,18 @@ def update_task_handler(update_status: bool = False) -> None:
         print(f"{'-' * 40}\nВЫБЕРИТЕ ID ЗАДАЧИ ИЗ СПИСКА:\n")
         for task in tasks:
             print(f"{task.name} | ID:{task.id} | {task.status}")
+
         # Запрашивает ID задачи
         task_id = input("Введите ID: ").replace(" ", "")
+
         # Проверяет, является ли введённый ID числом
         if is_digit(task_id):
             if update_status:
+
                 # Обновляет только статус задачи, если флаг `update_status` True
                 task_manager.update_status(int(task_id))
                 break
+
             # Обновляет данные задачи
             task_manager.update_task(int(task_id))
             break
